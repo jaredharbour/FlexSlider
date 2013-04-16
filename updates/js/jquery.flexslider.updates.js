@@ -7,7 +7,6 @@
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
  * Contributing author: Tyler Smith (@mbmufffin)
- * kaq Vertical Nav updates
  */
 
 ;(function ($) {
@@ -137,6 +136,7 @@
       asNav: {
         setup: function() {
           slider.asNav = true;
+		  slider.master = $(vars.asNavFor);
           slider.animatingTo = Math.floor(slider.currentSlide/slider.move);
           slider.currentItem = slider.currentSlide;
           slider.slides.removeClass(namespace + "active-slide").eq(slider.currentItem).addClass(namespace + "active-slide");
@@ -396,19 +396,16 @@
             methods.smoothHeight();
           } else if (carousel) { //CAROUSEL:
 			if(vertical){
-				console.log(slider.computedH);
-				slider.viewport.height(slider.computedH);
-				// slider.slides.height(slider.computedH);
+				slider.slides.height(slider.computedH);
 			}else{
 				slider.slides.width(slider.computedW);
 			}
+			// slider.slides.width(slider.computedW); // orig
             slider.update(slider.pagingCount);
             slider.setProps();
           }
           else if (vertical) { //VERTICAL:
             slider.viewport.height(slider.h);
-			// slider.viewport.height(slider.computedH);
-			
             slider.setProps(slider.h, "setTotal");
           } else {
             // SMOOTH HEIGHT:
@@ -504,9 +501,9 @@
 				calcNext = ((slider.itemH + margin) * slider.move) * slider.animatingTo;
 				slideString = (calcNext > slider.limit && slider.visible !== 1) ? slider.limit : calcNext;
 			}else{
-				margin = (vars.itemWidth > slider.w) ? vars.itemMargin * 2 : vars.itemMargin;
-				calcNext = ((slider.itemW + margin) * slider.move) * slider.animatingTo;
-				slideString = (calcNext > slider.limit && slider.visible !== 1) ? slider.limit : calcNext;
+				margin = (vars.itemWidth > slider.w) ? vars.itemMargin * 2 : vars.itemMargin; // orig
+				calcNext = ((slider.itemW + margin) * slider.move) * slider.animatingTo; // orig
+				slideString = (calcNext > slider.limit && slider.visible !== 1) ? slider.limit : calcNext; // orig
 			}
           } else if (slider.currentSlide === 0 && target === slider.count - 1 && vars.animationLoop && slider.direction !== "next") {
             slideString = (reverse) ? (slider.count + slider.cloneOffset) * dimension : 0;
@@ -612,6 +609,8 @@
 
     // SLIDE:
     slider.setProps = function(pos, special, dur) {
+	// console.log(slider);
+	// console.log(pos);
       var target = (function() {
         var posCheck = (pos) ? pos : ((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo,
             posCalc = (function() {
@@ -681,16 +680,12 @@
             slider.setProps(sliderOffset * slider.h, "init");
           }, (type === "init") ? 100 : 0);
         } else if (vertical && carousel) {
-          slider.container.height((slider.count + slider.cloneCount) * 200 + "%").css("position", "absolute").width(slider.itemWT);
+          slider.container.height((slider.count + slider.cloneCount) * 200 + "%").css("position", "absolute").width(slider.w);
           setTimeout(function(){
             slider.newSlides.css({"display": "block"});
             slider.doMath();
-			slider.width(slider.itemWT);
-			slider.viewport.width(slider.itemWT);
-			// slider.height(slider.itemHT);
-			// slider.viewport.height(slider.itemHT);
-            slider.viewport.height(slider.computedH);
-            slider.setProps(sliderOffset * slider.computedH, "init");
+			slider.viewport.height(slider.master.height());
+            slider.setProps(sliderOffset * slider.h, "init");
           }, (type === "init") ? 100 : 0);
         } else {
           slider.container.width((slider.count + slider.cloneCount) * 200 + "%");
@@ -724,9 +719,10 @@
           slideMargin = vars.itemMargin,
           minItems = vars.minItems,
           maxItems = vars.maxItems;
-
+		  
       slider.w = slider.width();
       slider.h = slide.height();
+
       slider.boxWPadding = slide.outerWidth() - slide.width();
 	  slider.boxHPadding = slide.outerHeight() - slide.height();
       // CAROUSEL:
@@ -759,6 +755,7 @@
 				(vars.itemWidth > slider.w) ? ((slider.itemW + (slideMargin * 2)) * slider.count) - slider.w - slideMargin : ((slider.itemW + slideMargin) * slider.count) - slider.w - slideMargin;
 		}
       } else {
+		slider.itemH = slider.h;
         slider.itemW = slider.w;
         slider.pagingCount = slider.count;
         slider.last = slider.count - 1;

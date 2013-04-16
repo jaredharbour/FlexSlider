@@ -1,4 +1,15 @@
-body{
-	width: 800px;
-	margin: 200px auto 0px auto;
-	}
+body{margin: 0px;}
+	#container{
+		height: 400px; width: 800px;
+		margin: 150px auto 0px auto;
+		}
+		#carousel{
+			
+			width: 20%;
+			float: left;
+			}
+		#gallery{
+			
+			width: 70%;
+			float: right;
+			}
