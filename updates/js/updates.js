@@ -16,7 +16,7 @@ $(document).ready(function(){
 		animationLoop: false,
 		slideshow: false,
 		itemWidth: 210,
-		itemHeight: 105,
+		itemHeight: 455,
 		// itemMargin: 5,
 		// move: 1,
 		asNavFor: '#slider'
