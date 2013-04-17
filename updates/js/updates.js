@@ -1,7 +1,6 @@
 $(document).ready(function(){
 	// The slider being synced must be initialized first
 	$('#carousel').flexslider({
-		// direction: "horizontal",
 		direction: "vertical",
 		controlNav: false,
 		animationLoop: false,
@@ -15,7 +14,6 @@ $(document).ready(function(){
 	});
 	   
 	$('#gallery').flexslider({
-		// direction: "horizontal",
 		// reverse: true,
 		direction: "vertical",
 		controlNav: false,
