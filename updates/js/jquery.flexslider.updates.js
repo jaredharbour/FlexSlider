@@ -39,6 +39,7 @@
         slider.slides = $(vars.selector, slider);
         slider.container = $(slider.containerSelector, slider);
         slider.count = slider.slides.length;
+		(vertical && !fade) ? slider.addClass("flex-vertical") : (!fade) ? slider.addClass("flex-horizontal") : slider.addClass("flex-fade");
         // SYNC:
         slider.syncExists = $(vars.sync).length > 0;
 		if (slider.syncExists){
@@ -618,10 +619,17 @@
         var posCheck = (pos) ? pos : ((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo,
             posCalc = (function() {
               if (carousel) {
-                return (special === "setTouch") ? pos :
-                       (reverse && slider.animatingTo === slider.last) ? 0 :
-                       (reverse) ? slider.limit - (((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo) :
-                       (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+				if(vertical){
+					return (special === "setTouch") ? pos :
+						   (reverse && slider.animatingTo === slider.last) ? 0 :
+						   (reverse) ? slider.limit - (((slider.itemH + vars.itemMargin) * slider.move) * slider.animatingTo) :
+						   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+				}else{
+					return (special === "setTouch") ? pos :
+						   (reverse && slider.animatingTo === slider.last) ? 0 :
+						   (reverse) ? slider.limit - (((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo) :
+						   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+				}
               } else {
                 switch (special) {
                   case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
@@ -725,41 +733,44 @@
 		  
       slider.w = slider.width();
       slider.h = slide.height();
-
       slider.boxWPadding = slide.outerWidth() - slide.width();
 	  slider.boxHPadding = slide.outerHeight() - slide.height();
+
       // CAROUSEL:
       if (carousel) {
-		slider.itemHT = vars.itemHeight + slideMargin;
-		slider.itemWT = vars.itemWidth + slideMargin;
-        slider.minW = (minItems) ? minItems * slider.itemWT : slider.w;
-        slider.maxW = (maxItems) ? maxItems * slider.itemWT : slider.w;
-		slider.minH = (minItems) ? minItems * slider.itemHT : slider.h;
-        slider.maxH = (maxItems) ? maxItems * slider.itemHT : slider.h;
-        slider.itemW = (slider.minW > slider.w) ? (slider.w - (slideMargin * minItems))/minItems :
-                       (slider.maxW < slider.w) ? (slider.w - (slideMargin * maxItems))/maxItems :
-                       (vars.itemWidth > slider.w) ? slider.w : vars.itemWidth;
-		slider.itemH = (slider.minH > slider.h) ? (slider.h - (slideMargin * minItems))/minItems :
-                       (slider.maxH < slider.h) ? (slider.h - (slideMargin * maxItems))/maxItems :
-                       (vars.itemHeight > slider.h) ? slider.h : vars.itemHeight;
+		  if(vertical && typeof slider.master !== "undefined"){
+				slider.h = slider.master.data("flexslider").h;
+			}
+			slider.itemHT = vars.itemHeight + slideMargin;
+			slider.minH = (minItems) ? minItems * slider.itemHT : slider.h;
+			slider.maxH = (maxItems) ? maxItems * slider.itemHT : slider.h;
+			slider.itemH = (slider.minH > slider.h) ? (slider.h - (slideMargin * minItems))/minItems :
+						   (slider.maxH < slider.h) ? (slider.h - (slideMargin * maxItems))/maxItems :
+						   (vars.itemHeight > slider.h) ? slider.h : vars.itemHeight;
+			slider.itemWT = vars.itemWidth + slideMargin;
+			slider.minW = (minItems) ? minItems * slider.itemWT : slider.w;
+			slider.maxW = (maxItems) ? maxItems * slider.itemWT : slider.w;
+			slider.itemW = (slider.minW > slider.w) ? (slider.w - (slideMargin * minItems))/minItems :
+						   (slider.maxW < slider.w) ? (slider.w - (slideMargin * maxItems))/maxItems :
+						   (vars.itemWidth > slider.w) ? slider.w : vars.itemWidth;
 		if(vertical){
 			slider.visible = Math.floor(slider.h/(slider.itemH + slideMargin));
+			slider.move = (vars.move > 0 && vars.move < slider.visible ) ? vars.move : slider.visible;
+			slider.pagingCount = Math.ceil(((slider.count - slider.visible)/slider.move) + 1);
+			slider.last =  slider.pagingCount - 1;
+			slider.limit = (slider.pagingCount === 1) ? 0 :
+                       (vars.itemHeight > slider.h) ? ((slider.itemH + (slideMargin * 2)) * slider.count) - slider.h - slideMargin : ((slider.itemH + slideMargin) * slider.count) - slider.h - slideMargin;
 		}else{
 			slider.visible = Math.floor(slider.w/(slider.itemW + slideMargin));
-		}
-        slider.move = (vars.move > 0 && vars.move < slider.visible ) ? vars.move : slider.visible;
-        slider.pagingCount = Math.ceil(((slider.count - slider.visible)/slider.move) + 1);
-        slider.last =  slider.pagingCount - 1;
-		if(vertical){
+			slider.move = (vars.move > 0 && vars.move < slider.visible ) ? vars.move : slider.visible;
+			slider.pagingCount = Math.ceil(((slider.count - slider.visible)/slider.move) + 1);
+			slider.last =  slider.pagingCount - 1;
 			slider.limit = (slider.pagingCount === 1) ? 0 :
-				(vars.itemHeight > slider.h) ? ((slider.itemH + (slideMargin * 2)) * slider.count) - slider.h - slideMargin : ((slider.itemH + slideMargin) * slider.count) - slider.h - slideMargin;
-		}else{
-			slider.limit = (slider.pagingCount === 1) ? 0 :
-				(vars.itemWidth > slider.w) ? ((slider.itemW + (slideMargin * 2)) * slider.count) - slider.w - slideMargin : ((slider.itemW + slideMargin) * slider.count) - slider.w - slideMargin;
+                       (vars.itemWidth > slider.w) ? ((slider.itemW + (slideMargin * 2)) * slider.count) - slider.w - slideMargin : ((slider.itemW + slideMargin) * slider.count) - slider.w - slideMargin;
 		}
       } else {
+		slider.itemW = slider.w;
 		slider.itemH = slider.h;
-        slider.itemW = slider.w;
         slider.pagingCount = slider.count;
         slider.last = slider.count - 1;
       }
