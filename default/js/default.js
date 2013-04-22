@@ -1,12 +1,4 @@
 $(document).ready(function(){
-/*
-	$('.flexslider').flexslider({
-		// direction: "horizontal",
-		direction: "vertical",
-		animation: 'slide'
-	});
-	*/
-	
 	// The slider being synced must be initialized first
 	$('#carousel').flexslider({
 		// direction: "horizontal",

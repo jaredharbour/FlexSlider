@@ -395,7 +395,6 @@
       resize: function() {
         if (!slider.animating && slider.is(':visible')) {
           if (!carousel) slider.doMath();
-
           if (fade) {
             // SMOOTH HEIGHT:
             methods.smoothHeight();
@@ -518,6 +517,7 @@
           } else {
             slideString = (reverse) ? ((slider.count - 1) - target + slider.cloneOffset) * dimension : (target + slider.cloneOffset) * dimension;
           }
+
           slider.setProps(slideString, "", vars.animationSpeed);
           if (slider.transitions) {
             if (!vars.animationLoop || !slider.atEnd) {
@@ -688,7 +688,7 @@
             slider.newSlides.css({"display": "block"});
             slider.doMath();
             slider.viewport.height(slider.h);
-			if (slider.syncExists) slider.sync.data.viewport.height(slider.h);
+			if (slider.syncExists) slider.sync.resize();
             slider.setProps(sliderOffset * slider.h, "init");
           }, (type === "init") ? 100 : 0);
         } else if (vertical && carousel) {
@@ -730,9 +730,10 @@
           slideMargin = vars.itemMargin,
           minItems = vars.minItems,
           maxItems = vars.maxItems;
-		  
+
       slider.w = slider.width();
       slider.h = slide.height();
+
       slider.boxWPadding = slide.outerWidth() - slide.width();
 	  slider.boxHPadding = slide.outerHeight() - slide.height();
 
