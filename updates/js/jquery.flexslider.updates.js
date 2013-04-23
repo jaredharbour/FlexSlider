@@ -404,7 +404,6 @@
 			}else{
 				slider.slides.width(slider.computedW);
 			}
-			// slider.slides.width(slider.computedW); // orig
             slider.update(slider.pagingCount);
             slider.setProps();
           }
@@ -615,42 +614,45 @@
 
     // SLIDE:
     slider.setProps = function(pos, special, dur) {
-      var target = (function() {
-        var posCheck = (pos) ? pos : ((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo,
-            posCalc = (function() {
-              if (carousel) {
-				if(vertical){
-					return (special === "setTouch") ? pos :
-						   (reverse && slider.animatingTo === slider.last) ? 0 :
-						   (reverse) ? slider.limit - (((slider.itemH + vars.itemMargin) * slider.move) * slider.animatingTo) :
-						   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
-				}else{
-					return (special === "setTouch") ? pos :
-						   (reverse && slider.animatingTo === slider.last) ? 0 :
-						   (reverse) ? slider.limit - (((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo) :
-						   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
-				}
-              } else {
-                switch (special) {
-                  case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
-                  case "setTouch": return (reverse) ? pos : pos;
-                  case "jumpEnd": return (reverse) ? pos : slider.count * pos;
-                  case "jumpStart": return (reverse) ? slider.count * pos : pos;
-                  default: return pos;
-                }
-              }
-            }());
-            return (posCalc * -1) + "px";
-          }());
+		var temp;
+		(vertical) ? temp = slider.itemH : temp = slider.itemW;
+		
+		var target = (function() {
+			var posCheck = (pos) ? pos : ((temp + vars.itemMargin) * slider.move) * slider.animatingTo,
+				posCalc = (function() {
+				  if (carousel) {
+					if(vertical){
+						return (special === "setTouch") ? pos :
+							   (reverse && slider.animatingTo === slider.last) ? 0 :
+							   (reverse) ? slider.limit - (((slider.itemH + vars.itemMargin) * slider.move) * slider.animatingTo) :
+							   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+					}else{
+						return (special === "setTouch") ? pos :
+							   (reverse && slider.animatingTo === slider.last) ? 0 :
+							   (reverse) ? slider.limit - (((slider.itemW + vars.itemMargin) * slider.move) * slider.animatingTo) :
+							   (slider.animatingTo === slider.last) ? slider.limit : posCheck;
+					}
+				  } else {
+					switch (special) {
+					  case "setTotal": return (reverse) ? ((slider.count - 1) - slider.currentSlide + slider.cloneOffset) * pos : (slider.currentSlide + slider.cloneOffset) * pos;
+					  case "setTouch": return (reverse) ? pos : pos;
+					  case "jumpEnd": return (reverse) ? pos : slider.count * pos;
+					  case "jumpStart": return (reverse) ? slider.count * pos : pos;
+					  default: return pos;
+					}
+				  }
+				}());
+				return (posCalc * -1) + "px";
+			}());
 
-      if (slider.transitions) {
-        target = (vertical) ? "translate3d(0," + target + ",0)" : "translate3d(" + target + ",0,0)";
-        dur = (dur !== undefined) ? (dur/1000) + "s" : "0s";
-        slider.container.css("-" + slider.pfx + "-transition-duration", dur);
-      }
+		if (slider.transitions) {
+			target = (vertical) ? "translate3d(0," + target + ",0)" : "translate3d(" + target + ",0,0)";
+			dur = (dur !== undefined) ? (dur/1000) + "s" : "0s";
+			slider.container.css("-" + slider.pfx + "-transition-duration", dur);
+		}
 
-      slider.args[slider.prop] = target;
-      if (slider.transitions || dur === undefined) slider.container.css(slider.args);
+		slider.args[slider.prop] = target;
+		if (slider.transitions || dur === undefined) slider.container.css(slider.args);
     }
 
     slider.setup = function(type) {

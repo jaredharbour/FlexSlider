@@ -3,9 +3,9 @@ $(document).ready(function(){
 	$('#carousel').flexslider({
 		direction: "vertical",
 		controlNav: false,
-		animationLoop: false,
+		// animationLoop: false,
 		slideshow: false,
-		// itemWidth: 100,
+		// itemWidth: 75,
 		itemHeight: 100,
 		asNavFor: '#gallery',
 		animation: "slide"
@@ -14,7 +14,7 @@ $(document).ready(function(){
 	$('#gallery').flexslider({
 		direction: "vertical",
 		controlNav: false,
-		animationLoop: false,
+		// animationLoop: false,
 		slideshow: false,
 		sync: "#carousel",
 		animation: "slide"
